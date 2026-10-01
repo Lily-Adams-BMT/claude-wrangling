@@ -1,0 +1,495 @@
+<title>Results page template</title>
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --bg:#f7f7f5; --panel:#ffffff; --ink:#1d1d1b; --muted:#5d5d58; --line:#deddd7; --soft:#efeee9;
+  --accent:#2f5d8a; --accent-ink:#ffffff; --good:#2e6b3f; --good-bg:#e4f1e7; --warn:#8a5a12; --warn-bg:#f8eedb;
+  --bad:#8f2f2f; --bad-bg:#f6e3e1; --code-bg:#f2f1ec;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161614; --panel:#1f1f1c; --ink:#ecebe6; --muted:#a8a79f; --line:#35342f; --soft:#262622;
+    --accent:#8db8e3; --accent-ink:#10202f; --good:#8fd0a0; --good-bg:#1f3325; --warn:#e6be7c; --warn-bg:#3a2e18;
+    --bad:#f0a39c; --bad-bg:#3d2320; --code-bg:#272723; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161614; --panel:#1f1f1c; --ink:#ecebe6; --muted:#a8a79f; --line:#35342f; --soft:#262622;
+  --accent:#8db8e3; --accent-ink:#10202f; --good:#8fd0a0; --good-bg:#1f3325; --warn:#e6be7c; --warn-bg:#3a2e18;
+  --bad:#f0a39c; --bad-bg:#3d2320; --code-bg:#272723; color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--sans)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;max-width:1440px;margin:0 auto;padding:24px 20px 80px}
+@media (max-width:1000px){.layout{grid-template-columns:minmax(0,1fr)}}
+header.top{grid-column:1/-1}
+h1{font-size:26px;line-height:1.25;margin:0 0 6px}
+h2{font-size:20px;margin:36px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+h3{font-size:16px;margin:22px 0 8px}
+p{margin:6px 0 10px}
+p,li,dd,h3,td,th{overflow-wrap:break-word}
+.muted{color:var(--muted)}
+code,pre{font-family:var(--mono);font-size:12.5px}
+code{background:var(--code-bg);padding:1px 4px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);padding:10px 12px;border-radius:6px;white-space:pre-wrap;word-break:break-word;margin:0;border:1px solid var(--line)}
+pre.code{white-space:pre;word-break:normal;overflow-wrap:normal;overflow-x:auto}
+a{color:var(--accent)}
+.tbl{overflow-x:auto;margin:8px 0 14px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:var(--panel)}
+caption{text-align:left;font-weight:600;padding:4px 0 6px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:600}
+tbody th{font-weight:500}
+.st{font-size:12px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.st.fixed{background:var(--good-bg);color:var(--good)}
+.st.same{background:var(--soft);color:var(--muted);border:1px solid var(--line)}
+.st.open{background:var(--warn-bg);color:var(--warn)}
+.needs{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:8px;padding:12px 14px;margin:10px 0}
+.needs h3{margin:0 0 6px}
+.rec{background:var(--warn-bg);padding:6px 9px;border-radius:6px;margin-top:6px}
+.group-h{display:flex;align-items:baseline;gap:10px}
+.group-h .count{font-size:13px;color:var(--muted);font-weight:400}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;transition:border-color .15s}
+.card.approved,.card.picked{border-color:var(--good);box-shadow:inset 4px 0 0 var(--good)}
+.card.skipped{opacity:.72;box-shadow:inset 4px 0 0 var(--muted)}
+.card.discussing{border-color:var(--warn);box-shadow:inset 4px 0 0 var(--warn)}
+.card-h{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;justify-content:space-between}
+.card-h h3{margin:0;font-size:16px}
+.cid{font-family:var(--mono);font-size:12px;color:var(--muted);margin-right:6px}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{font-size:12px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);background:var(--soft);white-space:nowrap}
+.badge.high{background:var(--good-bg);color:var(--good);border-color:transparent}
+.badge.medium{background:var(--warn-bg);color:var(--warn);border-color:transparent}
+.badge.sev{background:var(--warn-bg);color:var(--warn);border-color:transparent}
+.badge.sev.major{background:var(--bad-bg);color:var(--bad)}
+.loc{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin:4px 0 8px;word-break:break-all}
+.diff{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:8px 0}
+.diff.stack{grid-template-columns:minmax(0,1fr)}
+@media (max-width:720px){.diff{grid-template-columns:minmax(0,1fr)}}
+.diff .lbl{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.03em}
+.diff .cur pre{border-left:3px solid var(--bad)}
+.diff .new pre{border-left:3px solid var(--good)}
+dl.meta{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;margin:8px 0 4px;font-size:14px}
+dl.meta dt{font-weight:600;color:var(--muted)}
+dl.meta dd{margin:0;min-width:0}
+@media (max-width:560px){dl.meta{grid-template-columns:minmax(0,1fr);gap:2px}dl.meta dd{margin-bottom:6px}}
+blockquote.rule{margin:0 0 4px;padding:4px 10px;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 6px 6px 0}
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:10px;margin:8px 0}
+.option{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
+.option h4{margin:0;font-size:14.5px}
+.option p{margin:0;font-size:14px}
+.option .tags{display:flex;flex-wrap:wrap;gap:6px}
+.option.mine{border-color:var(--accent)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+button{font:inherit;font-size:13.5px;border-radius:7px;border:1px solid var(--line);background:var(--soft);color:var(--ink);padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.approve[aria-pressed="true"],button.pick[aria-pressed="true"]{background:var(--good);color:var(--panel);border-color:var(--good)}
+button.skip[aria-pressed="true"]{background:var(--muted);color:var(--panel);border-color:var(--muted)}
+button.discuss[aria-pressed="true"]{background:var(--warn);color:var(--panel);border-color:var(--warn)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.state{font-size:12.5px;color:var(--muted)}
+aside.panel{position:sticky;top:calc(12px + env(safe-area-inset-top,0px));align-self:start;max-height:calc(100vh - 24px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+@media (max-width:1000px){aside.panel{position:static;max-height:none}}
+aside.panel h2{margin:0 0 8px;font-size:17px;border:0;padding:0}
+.tally{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;margin-bottom:10px}
+.tally span{background:var(--soft);padding:2px 8px;border-radius:999px}
+#comment-list{list-style:none;margin:0;padding:0}
+#comment-list li{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:0 0 8px;background:var(--bg)}
+#comment-list .c-sec{font-size:12px;color:var(--muted)}
+#comment-list .c-quote{font-style:italic;margin:3px 0}
+#comment-list .c-note{margin:3px 0 0}
+#comment-list .c-del{float:right;font-size:12px;padding:1px 8px}
+.empty{color:var(--muted);font-size:13.5px}
+#prompt-preview{width:100%;min-height:120px;font-family:var(--mono);font-size:12px;margin-top:8px;background:var(--code-bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px}
+#copy-status{font-size:12.5px;color:var(--good);margin-left:6px}
+#cpop{position:absolute;z-index:50;display:none;background:var(--panel);border:1px solid var(--accent);border-radius:9px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:8px;width:min(380px,calc(100vw - 32px))}
+#cpop .q{font-size:12px;color:var(--muted);margin-bottom:6px;max-height:3.2em;overflow:hidden}
+#cpop form{display:flex;gap:6px}
+#cpop input{flex:1;min-width:0;font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.summary{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:12px}
+.summary ul{margin:6px 0 4px;padding-left:20px}
+.kv{font-family:var(--mono);font-size:12.5px;overflow-wrap:anywhere}
+</style>
+
+<!--
+  Per-page settings. The script below reads only this block, so it never needs edits.
+  keyPrefix:   localStorage key prefix; the full key is keyPrefix + ":" + the page's file path.
+  dataFile:    the JSON file beside this page that holds the same content as data.
+  pageLabel:   the first word of the copied prompt's first line ("Review page", "Decision page").
+  contextLine: one line that names the subject and the pinned commit, e.g. "PR: <url> (reviewed at abc1234)".
+  closing:     the instruction that ends the copied prompt.
+-->
+<script type="application/json" id="page-config">
+{
+  "keyPrefix": "results-template",
+  "dataFile": "findings.json",
+  "pageLabel": "Review page",
+  "contextLine": "Subject: <link to the PR, ticket, or plan> (reviewed at <short sha>)",
+  "closing": "Draft review comments for the kept findings for me to paste (do not post them), and answer each comment."
+}
+</script>
+
+<div class="layout">
+<header class="top" data-section="Header">
+  <h1>Results page template</h1>
+  <p class="muted"><a href="https://example.com/subject">Subject title</a> by its author, reviewed at <code>abc1234</code> on YYYY-MM-DD. Size or scope in one line, and the flag or gate if there is one.</p>
+  <p class="muted">Who wrote this page and how: the skills, rules, and passes used. Say that every finding was checked against the pinned commit, and that nothing was posted or changed.</p>
+  <p class="muted kv">Page: /absolute/path/to/this/page.html<br>Data: findings.json in the same folder</p>
+  <div class="summary" data-section="Start here">
+    <h2 style="margin-top:0;border:0;padding:0">Start here</h2>
+    <ul>
+      <li><strong>The main point first.</strong> One bullet per group of cards, each with a link to its card (<a href="#card-F1">F1</a>).</li>
+      <li><strong>What I rejected that a reader might expect,</strong> such as a false finding from a sub-pass.</li>
+      <li><strong>My recommendation:</strong> one sentence.</li>
+    </ul>
+    <p class="muted">N cards, N decisions for you. CI or other status at review time, with counts.</p>
+  </div>
+</header>
+
+<main id="main">
+<section id="needs-me" data-section="Needs me">
+  <h2>1. Needs you</h2>
+  <div class="needs" data-section="Needs me · N1 short label">
+    <h3>N1. A decision only the reader can make</h3>
+    <p>The facts the decision depends on, in two or three sentences.</p>
+    <p class="rec"><strong>Recommendation:</strong> what I would do, and why, in one sentence.</p>
+  </div>
+</section>
+
+<section id="findings" data-section="Findings">
+  <h2>2. Findings</h2>
+  <p>File locations are new-file line numbers at <code>abc1234</code>. Each links to that exact commit.</p>
+
+  <h3 class="group-h" data-section="Findings · Worth raising">Worth raising <span class="count">1 card</span></h3>
+
+  <article class="card" id="card-F1" data-kind="finding" data-id="F1" data-title="One sentence that states the defect" data-section="F1 · Short label">
+    <div class="card-h"><h3><span class="cid">F1</span>One sentence that states the defect</h3>
+      <div class="badges"><span class="badge sev major">fix before merge</span><span class="badge high">confidence: high</span><span class="badge">rule-id</span><span class="badge">already raised: no</span></div></div>
+    <div class="loc"><a href="https://github.com/OWNER/REPO/blob/FULL_SHA/path/to/file.ext#L10-L12">path/to/file.ext:10-12</a></div>
+    <div class="diff stack">
+      <div class="cur"><div class="lbl">In the PR</div><pre class="code">the current code, copied exactly from the pinned commit</pre></div>
+      <div class="new"><div class="lbl">Suggested</div><pre class="code">the suggested code, ready to paste</pre></div>
+    </div>
+    <dl class="meta">
+      <dt>Why</dt><dd>What goes wrong, for whom, and under which conditions. Use a concrete input and the wrong result it produces.</dd>
+      <dt>Rule</dt><dd><blockquote class="rule">"The exact quote from the rule body."</blockquote><a href="https://the-book.betterment.io/rules/RULE/#heading-slug">rule-id: heading</a></dd>
+      <dt>Evidence</dt><dd>Where I confirmed it, with file and line, and which pass found it.</dd>
+    </dl>
+    <div class="actions"><button class="approve" type="button" aria-pressed="false">Keep</button><button class="skip" type="button" aria-pressed="false">Skip</button><span class="state">Not decided</span></div>
+  </article>
+
+  <h3 class="group-h" data-section="Findings · Minor">Minor <span class="count">1 card</span></h3>
+
+  <article class="card" id="card-F2" data-kind="finding" data-id="F2" data-title="A minor finding with a short side-by-side diff" data-section="F2 · Short label">
+    <div class="card-h"><h3><span class="cid">F2</span>A minor finding with a short side-by-side diff</h3>
+      <div class="badges"><span class="badge sev">recommendation</span><span class="badge medium">confidence: medium</span><span class="badge">already raised: no</span></div></div>
+    <div class="loc"><a href="https://github.com/OWNER/REPO/blob/FULL_SHA/path/to/other.ext#L5">path/to/other.ext:5</a></div>
+    <div class="diff">
+      <div class="cur"><div class="lbl">In the PR</div><pre class="code">short_line()</pre></div>
+      <div class="new"><div class="lbl">Suggested</div><pre>Prose works here too, when the suggestion is not code.</pre></div>
+    </div>
+    <dl class="meta">
+      <dt>Why</dt><dd>One or two sentences.</dd>
+      <dt>Evidence</dt><dd>Where I looked.</dd>
+    </dl>
+    <div class="actions"><button class="approve" type="button" aria-pressed="false">Keep</button><button class="skip" type="button" aria-pressed="false">Skip</button><span class="state">Not decided</span></div>
+  </article>
+
+  <h3 class="group-h" data-section="Findings · Decisions">Decisions <span class="count">1 card</span></h3>
+
+  <article class="card" id="card-D1" data-kind="decision" data-id="D1" data-title="The question to decide" data-section="D1 · Short label" data-mine="B">
+    <div class="card-h"><h3><span class="cid">D1</span>The question to decide</h3>
+      <div class="badges"><span class="badge">my pick: B</span></div></div>
+    <p>The context the reader needs to choose, in two or three sentences.</p>
+    <div class="options">
+      <div class="option" data-option="A"><h4>A. First option</h4><p>What it does and what it costs.</p><div class="tags"><span class="badge">existing draft: A</span></div><button class="pick" type="button" data-option="A" aria-pressed="false">Pick A</button></div>
+      <div class="option mine" data-option="B"><h4>B. Second option</h4><p>What it does and what it costs.</p><div class="tags"><span class="badge high">my pick</span></div><button class="pick" type="button" data-option="B" aria-pressed="false">Pick B</button></div>
+      <div class="option" data-option="C"><h4>C. Third option</h4><p>What it does and what it costs.</p><div class="tags"></div><button class="pick" type="button" data-option="C" aria-pressed="false">Pick C</button></div>
+    </div>
+    <div class="actions"><button class="discuss" type="button" aria-pressed="false">Discuss</button><span class="state">Not decided</span></div>
+  </article>
+</section>
+
+<section id="others" data-section="Already raised by others">
+  <h2>3. Already raised by others</h2>
+  <div class="tbl" data-section="Already raised by others"><table>
+    <caption>Review threads at abc1234</caption>
+    <thead><tr><th scope="col">Who</th><th scope="col">Where</th><th scope="col">What</th><th scope="col">Status</th><th scope="col">Reply, and what it means here</th></tr></thead>
+    <tbody>
+    <tr><th scope="row">Reviewer</th><td><code>file.ext:10</code></td><td>What they raised.</td><td><span class="st open">open</span></td><td>The reply, quoted, and what it means for the cards.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="rejected" data-section="Checked and not raised">
+  <h2>4. Checked and not raised</h2>
+  <div class="tbl" data-section="Checked and not raised"><table>
+    <caption>Candidate findings I checked and dropped</caption>
+    <thead><tr><th scope="col">Candidate</th><th scope="col">Why it isn't a card</th></tr></thead>
+    <tbody>
+    <tr><th scope="row">A candidate, and which pass raised it</th><td>The fact that rules it out.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="unconfirmed" data-section="Could not confirm">
+  <h2>5. What I couldn't confirm, and where I looked</h2>
+  <div class="tbl" data-section="Could not confirm"><table>
+    <caption>Open items</caption>
+    <thead><tr><th scope="col">What</th><th scope="col">Where I looked</th></tr></thead>
+    <tbody>
+    <tr><th scope="row">An open question</th><td>The sources I checked.</td></tr>
+    </tbody>
+  </table></div>
+  <h3 data-section="Could not confirm · Method">How I reviewed</h3>
+  <p data-section="Could not confirm · Method">The inputs I read, the rules I used, and how many sub-pass findings became cards, were rejected, or moved to the tables.</p>
+</section>
+</main>
+
+<aside class="panel" id="panel" data-section="Comments panel">
+  <h2>Decisions and comments</h2>
+  <div class="tally" id="tally"></div>
+  <p class="muted" style="font-size:13px">Select any text on the page to comment on it. Comments and decisions stay in this browser, keyed by this file's path.</p>
+  <ul id="comment-list"></ul>
+  <div class="actions">
+    <button class="primary" id="copy-prompt" type="button">Copy prompt</button><span id="copy-status" role="status"></span>
+  </div>
+  <textarea id="prompt-preview" readonly aria-label="Prompt to paste back into Claude Code"></textarea>
+</aside>
+</div>
+
+<div id="cpop" role="dialog" aria-label="Add a comment">
+  <div class="q" id="cpop-quote"></div>
+  <form id="cpop-form" autocomplete="off">
+    <input id="cpop-input" type="text" placeholder="Your comment" aria-label="Comment">
+    <button class="primary" type="submit">Comment</button>
+  </form>
+</div>
+
+<script>
+(function () {
+  var CONFIG = JSON.parse(document.getElementById('page-config').textContent);
+  var PAGE_PATH = decodeURIComponent(location.pathname);
+  var JSON_PATH = PAGE_PATH.replace(/[^\/]+$/, CONFIG.dataFile);
+  var KEY = CONFIG.keyPrefix + ':' + PAGE_PATH;
+  var state = load();
+
+  function load() {
+    var empty = { decisions: {}, picks: {}, discuss: {}, comments: [] };
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) {
+        var s = JSON.parse(raw);
+        return { decisions: s.decisions || {}, picks: s.picks || {}, discuss: s.discuss || {}, comments: s.comments || [] };
+      }
+    } catch (e) {}
+    return empty;
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function trimTo(text, n) {
+    var t = text.replace(/\s+/g, ' ').trim();
+    return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t;
+  }
+  function sectionFor(node) {
+    var el = node && (node.nodeType === 1 ? node : node.parentElement);
+    var host = el && el.closest('[data-section]');
+    return host ? host.getAttribute('data-section') : 'Page';
+  }
+  function list(kind) { return Array.prototype.slice.call(document.querySelectorAll('.card[data-kind="' + kind + '"]')); }
+  function label(card) { return card.getAttribute('data-id') + ' ' + card.getAttribute('data-title'); }
+  function buttonText(card, cls) { var b = card.querySelector('button.' + cls); return b ? b.textContent.trim() : cls; }
+
+  function applyState() {
+    list('finding').forEach(function (card) {
+      var d = state.decisions[card.getAttribute('data-id')] || '';
+      card.classList.toggle('approved', d === 'approve');
+      card.classList.toggle('skipped', d === 'skip');
+      card.querySelector('button.approve').setAttribute('aria-pressed', d === 'approve' ? 'true' : 'false');
+      card.querySelector('button.skip').setAttribute('aria-pressed', d === 'skip' ? 'true' : 'false');
+      var st = card.querySelector('.state');
+      var done = { Keep: 'Kept', Approve: 'Approved' }[buttonText(card, 'approve')] || 'Chosen';
+      if (st) st.textContent = d === 'approve' ? done : d === 'skip' ? 'Skipped' : 'Not decided';
+    });
+    list('decision').forEach(function (card) {
+      var id = card.getAttribute('data-id');
+      var p = state.picks[id] || '';
+      var talk = !!state.discuss[id];
+      card.querySelectorAll('button.pick').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-option') === p ? 'true' : 'false'); });
+      card.querySelector('button.discuss').setAttribute('aria-pressed', talk ? 'true' : 'false');
+      card.classList.toggle('picked', !!p && !talk);
+      card.classList.toggle('discussing', talk);
+      var st = card.querySelector('.state');
+      if (st) st.textContent = talk ? 'Discuss' : p ? 'Picked ' + p : 'Not decided';
+    });
+    var f = list('finding'), dcs = list('decision'), parts = [];
+    if (f.length) {
+      var a = 0, s = 0;
+      f.forEach(function (c) { var d = state.decisions[c.getAttribute('data-id')]; if (d === 'approve') a++; if (d === 'skip') s++; });
+      parts.push(a + ' kept', s + ' skipped', (f.length - a - s) + ' not decided');
+    }
+    if (dcs.length) {
+      var pk = 0, dz = 0;
+      dcs.forEach(function (c) { var id = c.getAttribute('data-id'); if (state.discuss[id]) dz++; else if (state.picks[id]) pk++; });
+      parts.push(pk + ' picked', dz + ' to discuss', (dcs.length - pk - dz) + ' open');
+    }
+    parts.push(state.comments.length + (state.comments.length === 1 ? ' comment' : ' comments'));
+    document.getElementById('tally').innerHTML = parts.map(function (t) { return '<span>' + t + '</span>'; }).join('');
+  }
+  function refresh() { save(); applyState(); renderComments(); renderPrompt(); }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('button.approve, button.skip, button.pick, button.discuss');
+    if (!btn) return;
+    var card = btn.closest('.card[data-id]');
+    var id = card.getAttribute('data-id');
+    if (btn.classList.contains('approve') || btn.classList.contains('skip')) {
+      var want = btn.classList.contains('approve') ? 'approve' : 'skip';
+      if (state.decisions[id] === want) delete state.decisions[id]; else state.decisions[id] = want;
+    } else if (btn.classList.contains('pick')) {
+      var opt = btn.getAttribute('data-option');
+      if (state.picks[id] === opt) delete state.picks[id]; else { state.picks[id] = opt; delete state.discuss[id]; }
+    } else {
+      if (state.discuss[id]) delete state.discuss[id]; else state.discuss[id] = true;
+    }
+    refresh();
+  });
+
+  var pop = document.getElementById('cpop');
+  var popInput = document.getElementById('cpop-input');
+  var popQuote = document.getElementById('cpop-quote');
+  var pending = null;
+
+  function hidePop() { pop.style.display = 'none'; pending = null; popInput.value = ''; }
+  function showPop(rect) {
+    pop.style.display = 'block';
+    var w = pop.offsetWidth;
+    var left = Math.min(Math.max(8, rect.left + window.scrollX), window.scrollX + document.documentElement.clientWidth - w - 8);
+    pop.style.left = left + 'px';
+    pop.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+    popQuote.textContent = '“' + pending.text + '”';
+    popInput.focus({ preventScroll: true });
+  }
+
+  document.addEventListener('mousedown', function (e) {
+    if (pop.style.display === 'block' && !pop.contains(e.target)) hidePop();
+  });
+  document.addEventListener('mouseup', function (e) {
+    if (pop.contains(e.target)) return;
+    if (e.target.closest && e.target.closest('input, textarea, select, button, [contenteditable="true"]')) return;
+    setTimeout(function () {
+      var sel = window.getSelection();
+      if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
+      var ae = document.activeElement;
+      if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA')) return;
+      var range = sel.getRangeAt(0);
+      var common = range.commonAncestorContainer;
+      var el = common.nodeType === 1 ? common : common.parentElement;
+      if (el && el.closest('input, textarea, #cpop')) return;
+      var text = sel.toString();
+      if (!text.replace(/\s+/g, '')) return;
+      pending = { text: trimTo(text, 160), section: sectionFor(common) };
+      showPop(range.getBoundingClientRect());
+    }, 0);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && pop.style.display === 'block') { hidePop(); }
+  });
+  document.getElementById('cpop-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var note = popInput.value.trim();
+    if (!pending || !note) { popInput.focus(); return; }
+    state.comments.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), section: pending.section, text: pending.text, note: note, at: new Date().toISOString() });
+    hidePop();
+    try { window.getSelection().removeAllRanges(); } catch (err) {}
+    refresh();
+  });
+
+  function renderComments() {
+    var ul = document.getElementById('comment-list');
+    ul.innerHTML = '';
+    if (!state.comments.length) {
+      var li = document.createElement('li'); li.className = 'empty'; li.textContent = 'No comments yet.'; ul.appendChild(li); return;
+    }
+    state.comments.forEach(function (c) {
+      var li = document.createElement('li');
+      li.setAttribute('data-comment-id', c.id);
+      var del = document.createElement('button'); del.type = 'button'; del.className = 'c-del'; del.textContent = 'Delete'; del.setAttribute('aria-label', 'Delete comment');
+      del.addEventListener('click', function () {
+        state.comments = state.comments.filter(function (x) { return x.id !== c.id; });
+        refresh();
+      });
+      var sec = document.createElement('div'); sec.className = 'c-sec'; sec.textContent = c.section;
+      var q = document.createElement('div'); q.className = 'c-quote'; q.textContent = '“' + c.text + '”';
+      var n = document.createElement('div'); n.className = 'c-note'; n.textContent = c.note;
+      li.appendChild(del); li.appendChild(sec); li.appendChild(q); li.appendChild(n);
+      ul.appendChild(li);
+    });
+  }
+
+  function group(lines, title, items) {
+    lines.push(title + ' (' + items.length + '):' + (items.length ? '' : ' none'));
+    items.forEach(function (x) { lines.push('- ' + x); });
+  }
+  function buildPrompt() {
+    var lines = [CONFIG.pageLabel + ': ' + PAGE_PATH, 'Data: ' + JSON_PATH, CONFIG.contextLine, ''];
+    var f = list('finding');
+    if (f.length) {
+      var kept = [], skipped = [], open = [];
+      f.forEach(function (card) {
+        var d = state.decisions[card.getAttribute('data-id')];
+        (d === 'approve' ? kept : d === 'skip' ? skipped : open).push(label(card));
+      });
+      group(lines, buttonText(f[0], 'approve'), kept);
+      group(lines, buttonText(f[0], 'skip'), skipped);
+      group(lines, 'Not decided', open);
+      lines.push('');
+    }
+    var dcs = list('decision');
+    if (dcs.length) {
+      var picks = [], talk = [], none = [];
+      dcs.forEach(function (card) {
+        var id = card.getAttribute('data-id'), p = state.picks[id], mine = card.getAttribute('data-mine');
+        if (state.discuss[id]) talk.push(label(card));
+        else if (p) picks.push(label(card) + ': ' + p + (mine ? (p === mine ? ' (matches my pick)' : ' (my pick was ' + mine + ')') : ''));
+        else none.push(label(card));
+      });
+      group(lines, 'Picks', picks);
+      group(lines, 'Discuss', talk);
+      group(lines, 'Open', none);
+      lines.push('');
+    }
+    lines.push('Comments (' + state.comments.length + '):' + (state.comments.length ? '' : ' none'));
+    state.comments.forEach(function (c) { lines.push('[' + c.section + '] "' + c.text + '" -> ' + c.note); });
+    lines.push('');
+    lines.push(CONFIG.closing);
+    return lines.join('\n');
+  }
+  function renderPrompt() { document.getElementById('prompt-preview').value = buildPrompt(); }
+
+  document.getElementById('copy-prompt').addEventListener('click', function () {
+    var text = buildPrompt();
+    renderPrompt();
+    window.__lastCopiedPrompt = text;
+    var status = document.getElementById('copy-status');
+    function fallback() {
+      var ta = document.getElementById('prompt-preview');
+      ta.focus(); ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (err) {}
+      ta.setSelectionRange(0, 0); ta.blur();
+      status.textContent = ok ? 'Copied' : 'Select the text below and copy it';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { status.textContent = 'Copied'; }, fallback);
+    } else { fallback(); }
+    setTimeout(function () { status.textContent = ''; }, 3000);
+  });
+
+  applyState(); renderComments(); renderPrompt();
+})();
+</script>

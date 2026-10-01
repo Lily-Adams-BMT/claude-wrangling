@@ -1,0 +1,52 @@
+PASS title matches h1
+PASS cards present, ids unique, every card has kind/title/section
+PASS every card id has a matching #card-<id>
+PASS 2 blob links, all pinned to --head
+PASS selection + mouseup shows popover
+PASS popover sits under the selection
+PASS Enter submits and hides
+PASS comment section is the card section
+PASS table caption commentable
+PASS Escape dismisses without a comment
+PASS heading commentable
+PASS click outside dismisses
+PASS textarea selection ignored
+PASS found a one-line table cell to drag
+PASS real drag on a table cell shows popover
+PASS table comment section
+PASS keep/skip marks
+PASS pick marks
+PASS tally counts comments
+PASS prompt = preview
+PASS prompt header lines
+PASS prompt lists the kept card
+PASS prompt lists the skipped card
+PASS prompt lists the pick
+PASS prompt comment lines
+PASS prompt ends with the closing line
+PASS reload keeps comments
+PASS storage key is keyPrefix:path
+PASS delete persists
+PASS no sideways scroll at 400px
+PASS no page errors
+
+Review page: /Users/lilyadams/src/retail/.scratch/results-page-template/template.html
+Data: /Users/lilyadams/src/retail/.scratch/results-page-template/findings.json
+Subject: <link to the PR, ticket, or plan> (reviewed at <short sha>)
+
+Keep (1):
+- F1 One sentence that states the defect
+Skip (1):
+- F2 A minor finding with a short side-by-side diff
+Not decided (0): none
+
+Picks (1):
+- D1 The question to decide: A (my pick was B)
+Discuss (0): none
+Open (0): none
+
+Comments (2):
+[F1 · Short label] "What goes wrong, for" -> First note
+[Already raised by others] "What they raised." -> Second note
+
+Draft review comments for the kept findings for me to paste (do not post them), and answer each comment.
