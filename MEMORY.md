@@ -1,6 +1,5 @@
 # Memory Index
 
-- [Single assertion per waitFor](feedback_testing.md) — each waitFor callback should contain only one assertion
 - [Don't run tests yourself](feedback_test_running.md) — never invoke pnpm test, vitest, or rspec; let the user run their own tests
 - [Keep PR comments brief](feedback_pr_comments.md) — default to 2-3 sentences for PR comments and review replies
 - [Discuss design in prose](feedback_design_discussion.md) — for nuanced design trade-offs, use prose not AskUserQuestion modals
